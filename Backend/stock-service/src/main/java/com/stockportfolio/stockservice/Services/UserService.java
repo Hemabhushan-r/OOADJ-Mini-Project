@@ -5,21 +5,28 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.stockportfolio.stockservice.Exceptions.UserPasswordMismatchException;
 import com.stockportfolio.stockservice.Models.User;
 import com.stockportfolio.stockservice.Repositories.UserRepository;
+import com.stockportfolio.stockservice.Security.UserInfoDetails;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class UserService implements UserServiceInterface {
+@NoArgsConstructor
+public class UserService implements UserServiceInterface, UserDetailsService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public User createUser(User user) {
@@ -49,14 +56,22 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public User authenticateByEmail(String email, String password) throws UserPasswordMismatchException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
+        Optional<User> user = userRepository.findByEmail(email);
+        User existingUser = user.get();
+        if (existingUser == null) {
             return null;
         }
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(password, existingUser.getPassword())) {
             throw new UserPasswordMismatchException();
         }
-        return user;
+        return existingUser;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> userDetail = userRepository.findByUsername(username);
+        return userDetail.map(UserInfoDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
     }
 
 }

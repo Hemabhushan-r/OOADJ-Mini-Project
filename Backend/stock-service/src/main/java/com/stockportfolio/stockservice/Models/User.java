@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -47,5 +49,8 @@ public class User {
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    @Column(name = "roles")
+    private String roles;
 
 }
