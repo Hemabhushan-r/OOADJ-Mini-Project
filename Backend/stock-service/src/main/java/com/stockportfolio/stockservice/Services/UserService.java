@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.stockportfolio.stockservice.Exceptions.UserPasswordMismatchException;
 import com.stockportfolio.stockservice.Models.User;
 import com.stockportfolio.stockservice.Repositories.UserRepository;
 
@@ -13,8 +16,10 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class UserService implements UserServiceInterface {
-
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public User createUser(User user) {
@@ -34,20 +39,24 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public User updateUser(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
+        return user;
     }
 
     @Override
-    public void deleteUser(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 
     @Override
-    public User authenticate(String email, String password) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'authenticate'");
+    public User authenticateByEmail(String email, String password) throws UserPasswordMismatchException {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return null;
+        }
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new UserPasswordMismatchException();
+        }
+        return user;
     }
 
 }
