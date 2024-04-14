@@ -21,7 +21,10 @@ Semester 6 Object Oriented Analysis and Design using Java Mini Project.
 * In VSCode with the Repo open, once Java Project is initialized
   * Expand JAVA PROJECTS on Side Bar
   * Click  + next to Referenced Libraries and add all jar files in `pathto\javafx-sdk-22\lib` to resolve dependencies in VSCode
-
+* Create a database named stock_portfolio_app_ooad_mp in MySQL and execute the below
+  * ```shell
+    mysql -u root -p stock_portfolio_app_ooad_mp < pathto\stock_portfolio_app_ooad_mp.sql
+    ```
 ## To Run Frontend
 
 Run
