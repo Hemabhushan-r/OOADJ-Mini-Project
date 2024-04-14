@@ -16,6 +16,18 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+	<profiles>
+	    <profile>
+	        <id>java22</id>
+	        <activation>
+	            <jdk>22</jdk>
+	        </activation>
+	        <properties>
+	            <maven.compiler.source>22</maven.compiler.source>
+	            <maven.compiler.target>22</maven.compiler.target>
+	        </properties>
+	    </profile>
+	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
