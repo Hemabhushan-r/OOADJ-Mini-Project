@@ -26,6 +26,7 @@ Semester 6 Object Oriented Analysis and Design using Java Mini Project.
     mysql -u root -p stock_portfolio_app_ooad_mp < pathto\stock_portfolio_app_ooad_mp.sql
     ```
 * Ensure you are running JDK 17 or later
+* In case the installed version of Java is different from JDK 17 use IntelliJ for proper exectution of the backend
 ## To Run Frontend
 
 Run
