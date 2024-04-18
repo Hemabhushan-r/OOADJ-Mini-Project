@@ -25,14 +25,17 @@ Semester 6 Object Oriented Analysis and Design using Java Mini Project.
   * ```shell
     mysql -u root -p stock_portfolio_app_ooad_mp < pathto\stock_portfolio_app_ooad_mp.sql
     ```
+
 ## To Run Frontend
 
 Run
 
 ```shell
-cd Frontend
-javac --module-path %PATH_TO_FX% --add-modules javafx.controls HelloFx.java
-java --module-path %PATH_TO_FX% --add-modules javafx.controls HelloFX
+cd Frontend/stock-portfolio-frontend
+```
+
+```shell
+mvn clean javafx:run
 ```
 
 ## To Run Backend
@@ -43,8 +46,8 @@ Run
 cd Backend\stock-service
 mvnw spring-boot:run
 ```
-The server would run at [locahost:8081](http:\\localhost:8081)
 
+The server would run at [locahost:8081](http:\\localhost:8081)
 
 ## Contributors
 
