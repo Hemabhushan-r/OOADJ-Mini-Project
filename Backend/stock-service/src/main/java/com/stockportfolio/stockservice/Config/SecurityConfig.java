@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests().requestMatchers("/api/v1/sebi/**").authenticated()
                 .and()
+                .authorizeHttpRequests().requestMatchers("/api/v1/stock/**").authenticated()
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

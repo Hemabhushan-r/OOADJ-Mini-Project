@@ -53,6 +53,12 @@ public class SignInController {
         try {
             String jsonString = objectMapper.writeValueAsString(data);
             String jsonResponse = RequestsService.postRequest("http://localhost:8081/api/v1/users/signin", jsonString);
+
+            HashMap<String, Object> map = objectMapper.readValue(jsonResponse, HashMap.class);
+            pageController.setJwtToken((String) map.get("token"));
+            pageController.setUsername("");
+            pageController.navigateToPortfolioPage();
+            // System.out.println(pageController.getJwtToken());
         } catch (JsonProcessingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -16,6 +16,14 @@ import lombok.Setter;
 public class PageController {
     private Stage primaryStage;
 
+    private String jwtToken;
+
+    private String username;
+
+    public PageController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
     public void navigateToSignUpPage() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../View/signup.fxml"));
@@ -52,10 +60,15 @@ public class PageController {
 
     public void navigateToPortfolioPage() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("portfolio.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../View/portfolio.fxml"));
+            Parent root = fxmlLoader.load();
             Scene scene = new Scene(root);
+            PortfolioController portfolioController = fxmlLoader.getController();
+            portfolioController.setPrimaryStage(primaryStage);
+            portfolioController.setPageController(this);
+            portfolioController.getUsernameField().setText(username);
             primaryStage.setScene(scene);
-            primaryStage.setTitle("Portfolio");
+            primaryStage.setTitle("Portfolio App");
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
