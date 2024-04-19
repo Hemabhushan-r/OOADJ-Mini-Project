@@ -8,24 +8,21 @@ import javafx.stage.Stage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Setter;
-
 import Service.RequestsService;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpController {
-
-    @FXML
-    private TextField username;
+public class SignInController {
 
     @FXML
     private TextField email;
@@ -33,34 +30,21 @@ public class SignUpController {
     @FXML
     private TextField password;
 
-    @FXML
-    private TextField panNumber;
-
-    @FXML
-    private TextField phoneNumber;
-
     private Stage primaryStage;
 
     private PageController pageController;
 
     @FXML
-    private void handleSignUpAsUser(ActionEvent event) {
-        String username_text = username.getText();
+    private void handleSignInAsUser(ActionEvent event) {
         String password_text = password.getText();
         String email_text = email.getText();
-        String panNumber_text = panNumber.getText();
-        String phoneNumber_text = phoneNumber.getText();
-        if (username_text == "" || password_text == "" || email_text == "" || panNumber_text == ""
-                || phoneNumber_text == "") {
+        if (password_text == "" || email_text == "") {
             return;
         }
         // System.out.println(username_text + " " + password_text + " " + email_text);
         Map<String, Object> data = new HashMap<>();
-        data.put("username", username_text);
         data.put("password", password_text);
         data.put("email", email_text);
-        data.put("panNumber", panNumber_text);
-        data.put("phoneNumber", phoneNumber_text);
 
         // Create ObjectMapper
         ObjectMapper objectMapper = new ObjectMapper();
@@ -68,7 +52,7 @@ public class SignUpController {
         // Serialize map to JSON string
         try {
             String jsonString = objectMapper.writeValueAsString(data);
-            String jsonResponse = RequestsService.postRequest("http://localhost:8081/api/v1/users/signup", jsonString);
+            String jsonResponse = RequestsService.postRequest("http://localhost:8081/api/v1/users/signin", jsonString);
         } catch (JsonProcessingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -76,17 +60,14 @@ public class SignUpController {
     }
 
     @FXML
-    private void handleSignUpAsSEBIOfficial(ActionEvent event) {
-        String username_text = username.getText();
+    private void handleSignInAsSEBIOfficial(ActionEvent event) {
         String password_text = password.getText();
         String email_text = email.getText();
-        String panNumber_text = panNumber.getText();
-        String phoneNumber_text = phoneNumber.getText();
-        System.out.println(username_text + " " + password_text + " " + email_text);
+        System.out.println(password_text + " " + email_text);
     }
 
     @FXML
-    private void handleSignInInstead(ActionEvent event) {
-        pageController.navigateToSignInPage();
+    private void handleSignUpInstead(ActionEvent event) {
+        pageController.navigateToSignUpPage();
     }
 }

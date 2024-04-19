@@ -1,0 +1,5 @@
+Service\RequestsService.class
+Controller\SignUpController.class
+Controller\PageController.class
+StockPortfolioFrontend.class
+Controller\SignInController.class
