@@ -1,8 +1,5 @@
 package com.stockportfolio.stockservice.Services;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +12,25 @@ import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import pl.zankowski.iextrading4j.api.stocks.Quote;
 
 @Service
 @NoArgsConstructor
 public class StockService implements StockServiceInterface {
 
     @Override
-    public double getStockPrice(String ticker) {
+    public QuoteResponse findStock(String ticker) {
+        Config cfg = Config.builder()
+                .key("03WG3PRNDHZT964C")
+                .timeOut(10)
+                .build();
+        AlphaVantage.api().init(cfg);
+        QuoteResponse response = AlphaVantage.api()
+                .timeSeries().quote().forSymbol(ticker).fetchSync();
+        return response;
+    }
+
+    @Override
+    public double findStockPrice(QuoteResponse quoteResponse) {
         // IEXCloudClient cloudClient =
         // IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_V1_SANDBOX,
         // new IEXCloudTokenBuilder()
@@ -36,17 +44,86 @@ public class StockService implements StockServiceInterface {
         // .withSymbol("AAPL")
         // .build());
 
-        // return quote.getAskPrice();
+        // return quote.findAskPrice();
 
+        return quoteResponse.getPrice();
+    }
+
+    @Override
+    public double findStockVolume(QuoteResponse quoteResponse) {
+
+        return quoteResponse.getVolume();
+    }
+
+    @Override
+    public double findStockHigh(QuoteResponse quoteResponse) {
+
+        return quoteResponse.getHigh();
+    }
+
+    @Override
+    public double findStockLow(QuoteResponse quoteResponse) {
+
+        return quoteResponse.getLow();
+    }
+
+    @Override
+    public double findStockOpen(QuoteResponse quoteResponse) {
+
+        return quoteResponse.getOpen();
+    }
+
+    @Override
+    public double findStockPrevClose(QuoteResponse quoteResponse) {
+        return quoteResponse.getPreviousClose();
+    }
+
+    @Override
+    public TimeSeriesResponse findStockIntradayHistory(String ticker) {
         Config cfg = Config.builder()
                 .key("03WG3PRNDHZT964C")
                 .timeOut(10)
                 .build();
         AlphaVantage.api().init(cfg);
-        QuoteResponse response = AlphaVantage.api()
-                .timeSeries().quote().forSymbol("IBM").fetchSync();
+        TimeSeriesResponse response = AlphaVantage.api()
+                .timeSeries().intraday().forSymbol(ticker).fetchSync();
+        return response;
+    }
 
-        return response.getPrice();
+    @Override
+    public TimeSeriesResponse findStockWeeklyHistory(String ticker) {
+        Config cfg = Config.builder()
+                .key("03WG3PRNDHZT964C")
+                .timeOut(10)
+                .build();
+        AlphaVantage.api().init(cfg);
+        TimeSeriesResponse response = AlphaVantage.api()
+                .timeSeries().weekly().forSymbol(ticker).fetchSync();
+        return response;
+    }
+
+    @Override
+    public TimeSeriesResponse findStockDailyHistory(String ticker) {
+        Config cfg = Config.builder()
+                .key("03WG3PRNDHZT964C")
+                .timeOut(10)
+                .build();
+        AlphaVantage.api().init(cfg);
+        TimeSeriesResponse response = AlphaVantage.api()
+                .timeSeries().daily().forSymbol(ticker).fetchSync();
+        return response;
+    }
+
+    @Override
+    public TimeSeriesResponse findStockMonthlyHistory(String ticker) {
+        Config cfg = Config.builder()
+                .key("03WG3PRNDHZT964C")
+                .timeOut(10)
+                .build();
+        AlphaVantage.api().init(cfg);
+        TimeSeriesResponse response = AlphaVantage.api()
+                .timeSeries().monthly().forSymbol(ticker).fetchSync();
+        return response;
     }
 
 }
