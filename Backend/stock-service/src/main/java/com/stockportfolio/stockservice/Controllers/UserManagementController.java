@@ -90,7 +90,7 @@ public class UserManagementController {
             user.setPhoneNumber(userSignUpRequest.getPhoneNumber());
             user.setVerified(false);
             user.setCreatedAt(new Date());
-            user.setRoles("ROLE_USER"); // Set default role
+            user.setRoles(userSignUpRequest.getRole()); // Set default role
 
             // Save the user to the database
             userService.createUser(user);

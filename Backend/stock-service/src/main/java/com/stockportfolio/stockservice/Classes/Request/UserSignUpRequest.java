@@ -21,4 +21,6 @@ public class UserSignUpRequest {
     private String panNumber;
 
     private String phoneNumber;
+
+    private String role;
 }

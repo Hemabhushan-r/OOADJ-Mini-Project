@@ -1,6 +1,8 @@
 Controller\PortfolioController.class
 Service\RequestsService.class
+Controller\PortfolioController$1.class
 Controller\SignUpController.class
 Controller\PageController.class
+Controller\PortfolioController$ListCell.class
 StockPortfolioFrontend.class
 Controller\SignInController.class

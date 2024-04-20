@@ -25,10 +25,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StockService implements StockServiceInterface {
 
+    private String API_KEY = "7K83BXYH93VO39QH";
+
     @Override
     public QuoteResponse findStock(String ticker) {
         Config cfg = Config.builder()
-                .key("03WG3PRNDHZT964C")
+                .key(API_KEY)
                 .timeOut(10)
                 .build();
         AlphaVantage.api().init(cfg);
@@ -89,7 +91,7 @@ public class StockService implements StockServiceInterface {
     @Override
     public TimeSeriesResponse findStockIntradayHistory(String ticker) {
         Config cfg = Config.builder()
-                .key("03WG3PRNDHZT964C")
+                .key(API_KEY)
                 .timeOut(10)
                 .build();
         AlphaVantage.api().init(cfg);
@@ -101,7 +103,7 @@ public class StockService implements StockServiceInterface {
     @Override
     public TimeSeriesResponse findStockWeeklyHistory(String ticker) {
         Config cfg = Config.builder()
-                .key("03WG3PRNDHZT964C")
+                .key(API_KEY)
                 .timeOut(10)
                 .build();
         AlphaVantage.api().init(cfg);
@@ -113,7 +115,7 @@ public class StockService implements StockServiceInterface {
     @Override
     public TimeSeriesResponse findStockDailyHistory(String ticker) {
         Config cfg = Config.builder()
-                .key("03WG3PRNDHZT964C")
+                .key(API_KEY)
                 .timeOut(10)
                 .build();
         AlphaVantage.api().init(cfg);
@@ -125,7 +127,7 @@ public class StockService implements StockServiceInterface {
     @Override
     public TimeSeriesResponse findStockMonthlyHistory(String ticker) {
         Config cfg = Config.builder()
-                .key("03WG3PRNDHZT964C")
+                .key(API_KEY)
                 .timeOut(10)
                 .build();
         AlphaVantage.api().init(cfg);
@@ -136,7 +138,7 @@ public class StockService implements StockServiceInterface {
 
     @Override
     public List<Map<String, Object>> searchByKeyword(String keyword) {
-        String apiKey = "03WG3PRNDHZT964C";
+        String apiKey = API_KEY;
         String url = String.format("%sfunction=%s&keywords=%s&apikey=%s",
                 Config.BASE_URL,
                 "SYMBOL_SEARCH",

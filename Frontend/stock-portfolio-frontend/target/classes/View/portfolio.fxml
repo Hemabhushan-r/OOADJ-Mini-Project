@@ -5,12 +5,13 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:controller="Controller.PortfolioController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480" minWidth="640" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #00C0FF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480" minWidth="640" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #00C0FF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.PortfolioController">
    <children>
       <AnchorPane layoutX="-8.0" maxHeight="720.0" maxWidth="280.0" prefHeight="720.0" prefWidth="280.0" style="-fx-background-color: #004E64;">
          <children>
@@ -20,22 +21,22 @@
                   <Font size="22.0" />
                </font>
             </Label>
-            <Button layoutX="3.0" layoutY="207.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="280.0" style="-fx-background-color: transparent; -fx-font-size: 20pt; -fx-border-color: #00A5CF;" text="Portfolio" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Button layoutX="3.0" layoutY="207.0" mnemonicParsing="false" onMouseClicked="#handlePortfolioClick" prefHeight="62.0" prefWidth="280.0" style="-fx-background-color: transparent; -fx-font-size: 20pt; -fx-border-color: #00A5CF;" text="Portfolio" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button layoutX="3.0" layoutY="269.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="280.0" style="-fx-background-color: transparent; -fx-font-size: 20pt; -fx-border-color: #00A5CF;" text="Orders" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Button layoutX="3.0" layoutY="269.0" mnemonicParsing="false" onMouseClicked="#handleOrdersClick" prefHeight="62.0" prefWidth="280.0" style="-fx-background-color: transparent; -fx-font-size: 20pt; -fx-border-color: #00A5CF;" text="Orders" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button layoutX="5.0" layoutY="329.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="280.0" style="-fx-background-color: transparent; -fx-font-size: 20pt; -fx-border-color: #00A5CF;" text="Watchlist" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Button layoutX="5.0" layoutY="329.0" mnemonicParsing="false" onMouseClicked="#handleWatchlistClick" prefHeight="62.0" prefWidth="280.0" style="-fx-background-color: transparent; -fx-font-size: 20pt; -fx-border-color: #00A5CF;" text="Watchlist" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button layoutX="5.0" layoutY="391.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="280.0" style="-fx-background-color: transparent; -fx-font-size: 20pt; -fx-border-color: #00A5CF;" text="Discover" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Button layoutX="5.0" layoutY="391.0" mnemonicParsing="false" onMouseClicked="#handleDiscoverClick" prefHeight="62.0" prefWidth="280.0" style="-fx-background-color: transparent; -fx-font-size: 20pt; -fx-border-color: #00A5CF;" text="Discover" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <font>
                   <Font size="25.0" />
                </font>
@@ -88,39 +89,43 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="698.0" layoutY="111.0" prefHeight="284.0" prefWidth="512.0" style="-fx-background-color: #004E64;" AnchorPane.bottomAnchor="325.0" AnchorPane.rightAnchor="70.0">
-         <effect>
-            <DropShadow />
-         </effect>
+      <AnchorPane fx:id="appPane" layoutX="273.0" layoutY="69.0" prefHeight="652.0" prefWidth="1008.0">
          <children>
-            <LineChart blendMode="ADD" layoutY="4.0" prefHeight="272.0" prefWidth="492.0" title="SENSEX">
-              <xAxis>
-                <CategoryAxis side="BOTTOM" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis side="LEFT" />
-              </yAxis>
-            </LineChart>
-         </children>
-      </AnchorPane>
-      <AnchorPane layoutX="311.0" layoutY="111.0" prefHeight="589.0" prefWidth="340.0" style="-fx-background-color: #004E64;">
-         <effect>
-            <DropShadow />
-         </effect>
-      </AnchorPane>
-      <AnchorPane layoutX="699.0" layoutY="435.0" prefHeight="262.0" prefWidth="512.0" style="-fx-background-color: #004E64;">
-         <effect>
-            <DropShadow />
-         </effect>
-         <children>
-            <LineChart blendMode="ADD" layoutX="-6.0" prefHeight="262.0" prefWidth="501.0" title="NIFTY">
-               <xAxis>
-                  <CategoryAxis side="BOTTOM" />
-               </xAxis>
-               <yAxis>
-                  <NumberAxis side="LEFT" />
-               </yAxis>
-            </LineChart>
+            <AnchorPane layoutX="426.0" layoutY="33.0" prefHeight="284.0" prefWidth="512.0" style="-fx-background-color: #004E64;">
+               <effect>
+                  <DropShadow />
+               </effect>
+               <children>
+                  <LineChart blendMode="ADD" layoutY="4.0" prefHeight="272.0" prefWidth="492.0" title="SENSEX">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="40.0" layoutY="33.0" prefHeight="589.0" prefWidth="340.0" style="-fx-background-color: #004E64;">
+               <effect>
+                  <DropShadow />
+               </effect>
+            </AnchorPane>
+            <AnchorPane layoutX="426.0" layoutY="360.0" prefHeight="262.0" prefWidth="512.0" style="-fx-background-color: #004E64;">
+               <effect>
+                  <DropShadow />
+               </effect>
+               <children>
+                  <LineChart blendMode="ADD" layoutX="-6.0" prefHeight="262.0" prefWidth="501.0" title="NIFTY">
+                     <xAxis>
+                        <CategoryAxis side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis side="LEFT" />
+                     </yAxis>
+                  </LineChart>
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </children>
