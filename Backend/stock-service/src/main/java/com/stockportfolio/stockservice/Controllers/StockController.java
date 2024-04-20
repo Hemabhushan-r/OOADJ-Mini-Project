@@ -2,6 +2,7 @@ package com.stockportfolio.stockservice.Controllers;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +118,15 @@ public class StockController {
         Map<String, Object> response = new HashMap<>();
         response.put("metadata", timeSeriesResponse.getMetaData());
         response.put("stockunits", timeSeriesResponse.getStockUnits());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/search-stock")
+    public ResponseEntity<?> searchStock(@RequestBody JsonNode request) {
+        String keyword = request.get("keyword").asText();
+        List<Map<String, Object>> searchResult = stockService.searchByKeyword(keyword);
+        Map<String, Object> response = new HashMap<>();
+        response.put("bestMatches", searchResult);
         return ResponseEntity.ok(response);
     }
 }

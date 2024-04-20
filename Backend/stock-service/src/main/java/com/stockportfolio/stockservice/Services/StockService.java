@@ -1,5 +1,10 @@
 package com.stockportfolio.stockservice.Services;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -7,8 +12,11 @@ import com.crazzyghost.alphavantage.AlphaVantage;
 import com.crazzyghost.alphavantage.Config;
 import com.crazzyghost.alphavantage.parameters.Interval;
 import com.crazzyghost.alphavantage.parameters.OutputSize;
+import com.crazzyghost.alphavantage.parameters.Function;
 import com.crazzyghost.alphavantage.timeseries.response.QuoteResponse;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stockportfolio.stockservice.Classes.HttpRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -124,6 +132,29 @@ public class StockService implements StockServiceInterface {
         TimeSeriesResponse response = AlphaVantage.api()
                 .timeSeries().monthly().forSymbol(ticker).fetchSync();
         return response;
+    }
+
+    @Override
+    public List<Map<String, Object>> searchByKeyword(String keyword) {
+        String apiKey = "03WG3PRNDHZT964C";
+        String url = String.format("%sfunction=%s&keywords=%s&apikey=%s",
+                Config.BASE_URL,
+                "SYMBOL_SEARCH",
+                keyword.replace(" ", "%20"),
+                apiKey);
+        try {
+            String jsonResponse = HttpRequest.sendGetRequest(url);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Serialize map to JSON string
+
+            HashMap<String, Object> map = objectMapper.readValue(jsonResponse, HashMap.class);
+            return (List<Map<String, Object>>) map.get("bestMatches");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

@@ -1,6 +1,8 @@
 package com.stockportfolio.stockservice.Services;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import com.crazzyghost.alphavantage.timeseries.response.QuoteResponse;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
@@ -28,4 +30,6 @@ public interface StockServiceInterface {
     TimeSeriesResponse findStockDailyHistory(String ticker);
 
     TimeSeriesResponse findStockMonthlyHistory(String ticker);
+
+    List<Map<String, Object>> searchByKeyword(String keyword);
 }
