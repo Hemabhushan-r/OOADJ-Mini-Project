@@ -57,6 +57,7 @@ public class SignInController {
             HashMap<String, Object> map = objectMapper.readValue(jsonResponse, HashMap.class);
             pageController.setJwtToken((String) map.get("token"));
             pageController.setUsername("");
+            pageController.setEmail(email_text);
             pageController.navigateToPortfolioPage();
             // System.out.println(pageController.getJwtToken());
         } catch (JsonProcessingException e) {

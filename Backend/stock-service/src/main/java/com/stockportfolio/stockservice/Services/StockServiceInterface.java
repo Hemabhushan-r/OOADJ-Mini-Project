@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.crazzyghost.alphavantage.timeseries.response.QuoteResponse;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
+import com.stockportfolio.stockservice.Models.StockOrder;
 
 public interface StockServiceInterface {
 
@@ -32,4 +33,12 @@ public interface StockServiceInterface {
     TimeSeriesResponse findStockMonthlyHistory(String ticker);
 
     List<Map<String, Object>> searchByKeyword(String keyword);
+
+    StockOrder findBySymbolAndEmailAndOrderType(String ticker, String email, String orderType);
+
+    List<StockOrder> findAllByEmail(String email);
+
+    StockOrder createOrUpdateStockOrder(StockOrder stockOrder);
+
+    void deleteStockOrder(StockOrder stockOrder);
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import com.crazzyghost.alphavantage.timeseries.response.QuoteResponse;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stockportfolio.stockservice.Classes.HttpRequest;
+import com.stockportfolio.stockservice.Models.StockOrder;
+import com.stockportfolio.stockservice.Repositories.StockOrderRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -26,6 +29,9 @@ import lombok.NoArgsConstructor;
 public class StockService implements StockServiceInterface {
 
     private String API_KEY = "7K83BXYH93VO39QH";
+
+    @Autowired
+    private StockOrderRepository stockOrderRepository;
 
     @Override
     public QuoteResponse findStock(String ticker) {
@@ -157,6 +163,38 @@ public class StockService implements StockServiceInterface {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public List<StockOrder> findAllByEmail(String email) {
+        Optional<List<StockOrder>> listOptional = stockOrderRepository.findAllByEmail(email);
+        if (listOptional.isPresent()) {
+            return listOptional.get();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public StockOrder findBySymbolAndEmailAndOrderType(String ticker, String email, String orderType) {
+        Optional<StockOrder> stockOptional = stockOrderRepository.findBySymbolAndEmailAndOrderType(ticker, email,
+                orderType);
+        if (stockOptional.isPresent()) {
+            return stockOptional.get();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public StockOrder createOrUpdateStockOrder(StockOrder stockOrder) {
+        stockOrderRepository.save(stockOrder);
+        return stockOrder;
+    }
+
+    @Override
+    public void deleteStockOrder(StockOrder stockOrder) {
+        stockOrderRepository.delete(stockOrder);
     }
 
 }

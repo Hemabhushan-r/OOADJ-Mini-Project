@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.stockportfolio.stockservice.Classes.Response.ApiResponse;
+import com.stockportfolio.stockservice.Models.StockOrder;
 import com.stockportfolio.stockservice.Services.StockService;
 
 import lombok.AllArgsConstructor;
@@ -127,6 +129,66 @@ public class StockController {
         List<Map<String, Object>> searchResult = stockService.searchByKeyword(keyword);
         Map<String, Object> response = new HashMap<>();
         response.put("bestMatches", searchResult);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/buy-stock")
+    public ResponseEntity<?> buyStock(@RequestBody JsonNode request) {
+        String ticker = request.get("ticker").asText();
+        String email = request.get("email").asText();
+        StockOrder existingOrder = stockService.findBySymbolAndEmailAndOrderType(ticker, email, "BUY");
+
+        if (existingOrder != null) {
+            existingOrder.setQuantity(existingOrder.getQuantity() + 1);
+            stockService.createOrUpdateStockOrder(existingOrder);
+        } else {
+            StockOrder newStockOrder = new StockOrder();
+            newStockOrder.setSymbol(ticker);
+            newStockOrder.setEmail(email);
+            newStockOrder.setQuantity(1); // Set initial quantity to 1
+            newStockOrder.setOrderType("BUY"); // Assuming default order type is "BUY"
+            stockService.createOrUpdateStockOrder(newStockOrder); // Save the new order
+        }
+        return ResponseEntity.ok(new ApiResponse(true, "Stock Purchased"));
+    }
+
+    @PostMapping("/sell-stock")
+    public ResponseEntity<?> sellStock(@RequestBody JsonNode request) {
+        String ticker = request.get("ticker").asText();
+        String email = request.get("email").asText();
+        StockOrder existingOrder = stockService.findBySymbolAndEmailAndOrderType(ticker, email, "BUY");
+
+        if (existingOrder != null) {
+            if (existingOrder.getQuantity() - 1 == 0) {
+                stockService.deleteStockOrder(existingOrder);
+            } else {
+                existingOrder.setQuantity(existingOrder.getQuantity() - 1);
+            }
+            StockOrder newStockOrder = new StockOrder();
+            newStockOrder.setSymbol(ticker);
+            newStockOrder.setEmail(email);
+            newStockOrder.setQuantity(1); // Set initial quantity to 1
+            newStockOrder.setOrderType("SELL"); // Assuming default order type is "BUY"
+            stockService.createOrUpdateStockOrder(newStockOrder);
+            stockService.createOrUpdateStockOrder(existingOrder);
+        } else {
+            return ResponseEntity.ok(new ApiResponse(false, String.format("Stock of symbol %s not bought", ticker)));// Save
+                                                                                                                     // the
+                                                                                                                     // new
+                                                                                                                     // order
+        }
+        return ResponseEntity.ok(new ApiResponse(true, "Stock Sold"));
+    }
+
+    @PostMapping("/get-stocks-associated-with-email")
+    public ResponseEntity<?> getStocksAssociatedWithEmail(@RequestBody JsonNode request) {
+        String email = request.get("email").asText();
+        List<StockOrder> stockOrders = stockService.findAllByEmail(email);
+        if (stockOrders == null) {
+            return ResponseEntity.ok(new ApiResponse(false, "No Stocks Asssociated Found"));
+        }
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("results", stockOrders);
         return ResponseEntity.ok(response);
     }
 }

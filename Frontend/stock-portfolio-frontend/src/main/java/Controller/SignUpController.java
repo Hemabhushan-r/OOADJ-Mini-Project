@@ -61,6 +61,7 @@ public class SignUpController {
         data.put("email", email_text);
         data.put("panNumber", panNumber_text);
         data.put("phoneNumber", phoneNumber_text);
+        data.put("role", "ROLE_USER");
 
         // Create ObjectMapper
         ObjectMapper objectMapper = new ObjectMapper();
@@ -73,6 +74,7 @@ public class SignUpController {
             HashMap<String, Object> map = objectMapper.readValue(jsonResponse, HashMap.class);
             pageController.setJwtToken((String) map.get("token"));
             pageController.setUsername(username_text);
+            pageController.setEmail(email_text);
             pageController.navigateToPortfolioPage();
         } catch (JsonProcessingException e) {
             // TODO Auto-generated catch block

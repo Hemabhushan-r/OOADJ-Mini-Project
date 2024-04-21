@@ -20,6 +20,8 @@ public class PageController {
 
     private String username;
 
+    private String email;
+
     public PageController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
@@ -66,7 +68,7 @@ public class PageController {
             PortfolioController portfolioController = fxmlLoader.getController();
             portfolioController.setPrimaryStage(primaryStage);
             portfolioController.setPageController(this);
-            portfolioController.getUsernameField().setText(username);
+            portfolioController.getUsernameField().setText(email);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Portfolio App");
             primaryStage.show();
