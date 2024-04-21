@@ -7,6 +7,7 @@ import java.util.function.Function;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import Model.StringWrapper;
 import Service.RequestsService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,6 +49,15 @@ public class PortfolioController {
     private Stage primaryStage;
 
     private PageController pageController;
+
+    @FXML
+    public void handleLogOutClick() {
+        pageController.setEmail("");
+        pageController.setJwtToken("");
+        pageController.setUsername("");
+        pageController.setRole("");
+        pageController.navigateToSignInPage();
+    }
 
     @FXML
     public void handlePortfolioClick() {
@@ -97,7 +107,7 @@ public class PortfolioController {
                 jsonRequest = objectMapper.writeValueAsString(requestMap);
                 String jsonResponse = RequestsService.postRequest("http://localhost:8081/api/v1/stock/buy-stock",
                         jsonRequest, pageController.getJwtToken());
-
+                handlePortfolioClick();
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -120,7 +130,7 @@ public class PortfolioController {
                 jsonRequest = objectMapper.writeValueAsString(requestMap);
                 String jsonResponse = RequestsService.postRequest("http://localhost:8081/api/v1/stock/sell-stock",
                         jsonRequest, pageController.getJwtToken());
-
+                handlePortfolioClick();
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -134,23 +144,59 @@ public class PortfolioController {
         summarizeStocksPane.setPrefSize(340.0, 589.0);
         summarizeStocksPane.setStyle("-fx-background-color: #004E64;");
         summarizeStocksPane.setEffect(new javafx.scene.effect.DropShadow());
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            HashMap<String, Object> jsonRequestMap = new HashMap<>();
-            jsonRequestMap.put("email", pageController.getEmail());
-            String jsonRequest = objectMapper.writeValueAsString(jsonRequestMap);
-            String jsonResponse = RequestsService.postRequest(
-                    "http://localhost:8081/api/v1/stock/get-stocks-associated-with-email", jsonRequest,
-                    pageController.getJwtToken());
-            HashMap<String, Object> jsonResponseMap = objectMapper.readValue(jsonResponse, HashMap.class);
-            System.out.println(jsonResponseMap);
-            summarizeStocksPane.getChildren()
-                    .add(createScrollPaneForSummarizeStocks(
-                            (List<HashMap<String, Object>>) jsonResponseMap.get("results"),
-                            lineChart1,
-                            yAxis));
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (pageController.getRole() == "ROLE_USER") {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                HashMap<String, Object> jsonRequestMap = new HashMap<>();
+                jsonRequestMap.put("email", pageController.getEmail());
+                String jsonRequest = objectMapper.writeValueAsString(jsonRequestMap);
+                String jsonResponse = RequestsService.postRequest(
+                        "http://localhost:8081/api/v1/stock/get-stocks-associated-with-email", jsonRequest,
+                        pageController.getJwtToken());
+                HashMap<String, Object> jsonResponseMap = objectMapper.readValue(jsonResponse, HashMap.class);
+                System.out.println(jsonResponseMap);
+                summarizeStocksPane.getChildren()
+                        .add(createScrollPaneForSummarizeStocks(
+                                (List<HashMap<String, Object>>) jsonResponseMap.get("results"),
+                                lineChart1,
+                                yAxis));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (pageController.getRole() == "ROLE_SEBI") {
+            graphPane2.getChildren().remove(sellButton);
+            buyButton.setText("Verify");
+
+            StringWrapper email = new StringWrapper();
+            buyButton.setOnMouseClicked((MouseEvent event) -> {
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    HashMap<String, Object> requestMap = new HashMap();
+                    requestMap.put("email", email.getString());
+                    String jsonRequest = objectMapper.writeValueAsString(requestMap);
+                    String jsonResponse = RequestsService.postRequest("http://localhost:8081/api/v1/sebi/verify-pan",
+                            jsonRequest, pageController.getJwtToken());
+                    handlePortfolioClick();
+                } catch (JsonProcessingException e) {
+                    // TODO: handle exception
+                }
+            });
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                HashMap<String, Object> jsonRequestMap = new HashMap<>();
+                jsonRequestMap.put("email", pageController.getEmail());
+                String jsonRequest = objectMapper.writeValueAsString(jsonRequestMap);
+                String jsonResponse = RequestsService.getRequest(
+                        "http://localhost:8081/api/v1/sebi/pending-users",
+                        pageController.getJwtToken());
+                HashMap<String, Object> jsonResponseMap = objectMapper.readValue(jsonResponse, HashMap.class);
+                System.out.println(jsonResponseMap);
+                summarizeStocksPane.getChildren()
+                        .add(createScrollPane(
+                                (List<HashMap<String, Object>>) jsonResponseMap.get("results"), email));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         appPane.getChildren().clear();
@@ -282,6 +328,24 @@ public class PortfolioController {
 
     }
 
+    public ScrollPane createScrollPane(List<HashMap<String, Object>> listElems, StringWrapper email) {
+        ObservableList<Pane> items = FXCollections.observableArrayList();
+        for (int i = 0; i < listElems.size(); i++) {
+            Pane pane = createAnchorPaneWithLabelForVerification(listElems.get(i), email);
+            items.add(pane);
+        }
+        ListView<Pane> listView = new ListView<>();
+        listView.setItems(items);
+        listView.setCellFactory(param -> new ListCell());
+        ScrollPane scrollPane = new ScrollPane(listView);
+        scrollPane.setLayoutX(12.0);
+        scrollPane.setLayoutY(135.0);
+        scrollPane.setPrefSize(315.0, 430.0);
+        scrollPane.setFitToWidth(true);
+        return scrollPane;
+
+    }
+
     public ScrollPane createScrollPaneForSummarizeStocks(List<HashMap<String, Object>> listElems, LineChart lineChart,
             NumberAxis yAxis) {
         ObservableList<Pane> items = FXCollections.observableArrayList();
@@ -383,7 +447,7 @@ public class PortfolioController {
         // Create labels and add them to the AnchorPane
         Label symLabel = createLabelForSearchRes(String.format("SYM: %s", data.get("symbol")), 14.0, 14.0);
         Label quantityLabel = createLabelForSearchRes(String.format("QTY: %s", data.get("quantity")), 90.0, 14.0);
-        Label typeLabel = createLabelForSearchRes(String.format("Type: %s", data.get("orderType")), 130.0, 14.0);
+        Label typeLabel = createLabelForSearchRes(String.format("Type: %s", data.get("orderType")), 160.0, 14.0);
         symLabel.setPrefWidth(70);
         typeLabel.setPrefWidth(70);
         quantityLabel.setPrefWidth(70);
@@ -407,6 +471,32 @@ public class PortfolioController {
 
         });
         anchorPane.getChildren().addAll(symLabel, quantityLabel, typeLabel);
+
+        return anchorPane;
+    }
+
+    private Pane createAnchorPaneWithLabelForVerification(HashMap<String, Object> data, StringWrapper email) {
+        AnchorPane anchorPane = new AnchorPane();
+        // anchorPane.setLayoutX(12.0);
+        // anchorPane.setLayoutY(95.0);
+        anchorPane.setPrefWidth(270.0);
+        anchorPane.setPrefHeight(160.0);
+        anchorPane.setStyle("-fx-background-color: #00A5CF; -fx-background-radius: 0.6em;");
+
+        Label usernameLabel = createLabelForSearchRes(String.format("Username: %s", data.get("username")), 14.0, 14.0);
+        Label emailLabel = createLabelForSearchRes(String.format("Email: %s", data.get("email")), 14.0, 35.0);
+        Label panLabel = createLabelForSearchRes(String.format("PAN: %s", data.get("panNumber")), 14.0, 56.0);
+        Label phoneNumLabel = createLabelForSearchRes(String.format("Ph No: %s", data.get("phoneNumber")),
+                14.0, 77.0);
+        usernameLabel.setPrefWidth(260);
+        emailLabel.setPrefWidth(260.0);
+        panLabel.setPrefWidth(260);
+        phoneNumLabel.setPrefWidth(260);
+        anchorPane.setOnMouseClicked((MouseEvent event) -> {
+            email.setString((String) data.get("email"));
+        });
+        // Add labels to the AnchorPane
+        anchorPane.getChildren().addAll(usernameLabel, emailLabel, panLabel, phoneNumLabel);
 
         return anchorPane;
     }

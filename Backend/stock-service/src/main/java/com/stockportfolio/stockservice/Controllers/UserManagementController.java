@@ -19,6 +19,7 @@ import com.stockportfolio.stockservice.Classes.Request.UserSignUpRequest;
 import com.stockportfolio.stockservice.Classes.Response.ApiResponse;
 import com.stockportfolio.stockservice.Classes.Response.JwtAuthenticationResponse;
 import com.stockportfolio.stockservice.Exceptions.UserPasswordMismatchException;
+import com.stockportfolio.stockservice.Models.PendingUser;
 import com.stockportfolio.stockservice.Models.User;
 import com.stockportfolio.stockservice.Security.JwtService;
 import com.stockportfolio.stockservice.Services.UserService;
@@ -91,8 +92,15 @@ public class UserManagementController {
             user.setVerified(false);
             user.setCreatedAt(new Date());
             user.setRoles(userSignUpRequest.getRole()); // Set default role
+            if (!userSignUpRequest.getRole().equals("ROLE_SEBI")) {
+                PendingUser pendingUser = new PendingUser.PendingUserBuilder().username(userSignUpRequest.getUsername())
+                        .email(userSignUpRequest.getEmail()).panNumber(userSignUpRequest.getPanNumber())
+                        .phoneNumber(userSignUpRequest.getPhoneNumber()).panVerified(false).phoneNumberVerified(false)
+                        .roles(userSignUpRequest.getRole()).build();
+                // Save the user to the database
+                userService.createPendingUser(pendingUser);
+            }
 
-            // Save the user to the database
             userService.createUser(user);
             // Generate JWT token
             String token = jwtService.generateToken(user.getEmail());

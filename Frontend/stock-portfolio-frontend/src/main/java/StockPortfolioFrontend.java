@@ -18,7 +18,7 @@ public class StockPortfolioFrontend extends Application {
         // Scene scene = new Scene(new StackPane(l), 640, 480);
         // stage.setScene(scene);
         // stage.show();
-        PageController pageController = new PageController(stage);
+        PageController pageController = PageController.getPageControllerInstance(stage);
         pageController.initialize();
     }
 

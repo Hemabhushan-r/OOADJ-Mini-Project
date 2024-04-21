@@ -22,8 +22,19 @@ public class PageController {
 
     private String email;
 
-    public PageController(Stage primaryStage) {
+    private String role;
+
+    static private PageController pageController = null;
+
+    private PageController(Stage primaryStage) {
         this.primaryStage = primaryStage;
+    }
+
+    public static PageController getPageControllerInstance(Stage primaryStage) {
+        if (pageController == null) {
+            pageController = new PageController(primaryStage);
+        }
+        return pageController;
     }
 
     public void navigateToSignUpPage() {
@@ -68,7 +79,8 @@ public class PageController {
             PortfolioController portfolioController = fxmlLoader.getController();
             portfolioController.setPrimaryStage(primaryStage);
             portfolioController.setPageController(this);
-            portfolioController.getUsernameField().setText(email);
+            portfolioController.getUsernameField().setText(email.substring(0, email.indexOf("@")));
+            portfolioController.handlePortfolioClick();
             primaryStage.setScene(scene);
             primaryStage.setTitle("Portfolio App");
             primaryStage.show();

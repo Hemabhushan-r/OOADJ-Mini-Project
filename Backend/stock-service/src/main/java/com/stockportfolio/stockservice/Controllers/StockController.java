@@ -29,10 +29,36 @@ public class StockController {
     @Autowired
     private StockService stockService;
 
+    // Command Pattern: Interface for stock operations
+    private interface StockOperation {
+        double execute(StockService stockService, String ticker);
+    }
+
+    // Command Pattern: Concrete implementation for getting stock price
+    private static class GetStockPriceOperation implements StockOperation {
+        @Override
+        public double execute(StockService stockService, String ticker) {
+            return stockService.findStockPrice(stockService.findStock(ticker));
+        }
+    }
+
+    // Command Pattern: Concrete implementation for getting stock high
+    private static class GetStockHighOperation implements StockOperation {
+        @Override
+        public double execute(StockService stockService, String ticker) {
+            return stockService.findStockHigh(stockService.findStock(ticker));
+        }
+    }
+
+    // Facade Pattern: Facade for stock operations
+    private double performStockOperation(String ticker, StockOperation operation) {
+        return operation.execute(stockService, ticker);
+    }
+
     @PostMapping("/get-stock-price")
     public ResponseEntity<?> getStockPrice(@RequestBody JsonNode request) {
         String ticker = request.get("ticker").asText();
-        double price = stockService.findStockPrice(stockService.findStock(ticker));
+        double price = performStockOperation(ticker, new GetStockPriceOperation()); // Using Facade
         Map<String, Object> response = new HashMap<>();
         response.put("price", price);
         return ResponseEntity.ok(response);
@@ -41,7 +67,7 @@ public class StockController {
     @PostMapping("/get-stock-high")
     public ResponseEntity<?> getStockHigh(@RequestBody JsonNode request) {
         String ticker = request.get("ticker").asText();
-        double price = stockService.findStockHigh(stockService.findStock(ticker));
+        double price = performStockOperation(ticker, new GetStockHighOperation()); // Using Facade
         Map<String, Object> response = new HashMap<>();
         response.put("high", price);
         return ResponseEntity.ok(response);
@@ -163,6 +189,7 @@ public class StockController {
                 stockService.deleteStockOrder(existingOrder);
             } else {
                 existingOrder.setQuantity(existingOrder.getQuantity() - 1);
+                stockService.createOrUpdateStockOrder(existingOrder);
             }
             StockOrder newStockOrder = new StockOrder();
             newStockOrder.setSymbol(ticker);
@@ -170,7 +197,6 @@ public class StockController {
             newStockOrder.setQuantity(1); // Set initial quantity to 1
             newStockOrder.setOrderType("SELL"); // Assuming default order type is "BUY"
             stockService.createOrUpdateStockOrder(newStockOrder);
-            stockService.createOrUpdateStockOrder(existingOrder);
         } else {
             return ResponseEntity.ok(new ApiResponse(false, String.format("Stock of symbol %s not bought", ticker)));// Save
                                                                                                                      // the

@@ -45,6 +45,11 @@
                   <Font size="22.0" />
                </font>
             </Label>
+            <Button layoutX="91.0" layoutY="610.0" mnemonicParsing="false" onMouseClicked="#handleLogOutClick" prefHeight="42.0" prefWidth="80.0" style="-fx-background-color: #00A5CF; -fx-background-radius: 0.6em;" text="Log Out" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
          </children>
          <effect>
             <DropShadow />

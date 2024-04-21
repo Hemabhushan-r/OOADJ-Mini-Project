@@ -105,4 +105,22 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         return pendingVerificationRepository.findAll();
     }
 
+    public PendingUser createPendingUser(PendingUser pendingUser) {
+        pendingVerificationRepository.save(pendingUser);
+        return pendingUser;
+    }
+
+    public void deletePendingUser(PendingUser pendingUser) {
+        pendingVerificationRepository.delete(pendingUser);
+    }
+
+    public PendingUser findPendingUserByEmail(String email) {
+        Optional<PendingUser> pendingUserOptional = pendingVerificationRepository.findByEmail(email);
+        if (pendingUserOptional.isPresent()) {
+            return pendingUserOptional.get();
+        } else {
+            return null;
+        }
+    }
+
 }

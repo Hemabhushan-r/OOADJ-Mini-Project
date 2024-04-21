@@ -58,6 +58,7 @@ public class SignInController {
             pageController.setJwtToken((String) map.get("token"));
             pageController.setUsername("");
             pageController.setEmail(email_text);
+            pageController.setRole("ROLE_USER");
             pageController.navigateToPortfolioPage();
             // System.out.println(pageController.getJwtToken());
         } catch (JsonProcessingException e) {
@@ -70,7 +71,33 @@ public class SignInController {
     private void handleSignInAsSEBIOfficial(ActionEvent event) {
         String password_text = password.getText();
         String email_text = email.getText();
-        System.out.println(password_text + " " + email_text);
+        if (password_text == "" || email_text == "") {
+            return;
+        }
+        // System.out.println(username_text + " " + password_text + " " + email_text);
+        Map<String, Object> data = new HashMap<>();
+        data.put("password", password_text);
+        data.put("email", email_text);
+
+        // Create ObjectMapper
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Serialize map to JSON string
+        try {
+            String jsonString = objectMapper.writeValueAsString(data);
+            String jsonResponse = RequestsService.postRequest("http://localhost:8081/api/v1/users/signin", jsonString);
+
+            HashMap<String, Object> map = objectMapper.readValue(jsonResponse, HashMap.class);
+            pageController.setJwtToken((String) map.get("token"));
+            pageController.setUsername("");
+            pageController.setEmail(email_text);
+            pageController.setRole("ROLE_SEBI");
+            pageController.navigateToPortfolioPage();
+            // System.out.println(pageController.getJwtToken());
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @FXML

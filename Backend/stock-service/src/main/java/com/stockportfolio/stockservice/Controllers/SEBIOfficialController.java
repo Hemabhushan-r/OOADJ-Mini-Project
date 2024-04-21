@@ -13,12 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.stockportfolio.stockservice.Security.JwtService;
 import com.stockportfolio.stockservice.Services.UserService;
+
+import jakarta.ws.rs.core.Response;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import com.stockportfolio.stockservice.Classes.Request.VerifyPanRequest;
 import com.stockportfolio.stockservice.Classes.Response.ApiResponse;
 import com.stockportfolio.stockservice.Models.PendingUser;
 
 import lombok.AllArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -40,12 +45,20 @@ public class SEBIOfficialController {
     private AuthenticationManager authenticationManager;
 
     @GetMapping("/pending-users")
-    public ResponseEntity<List<PendingUser>> pendingUsers() {
-        return ResponseEntity.ok(userService.getAllPendingVerificationUsers());
+    public ResponseEntity<?> pendingUsers() {
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("results", userService.getAllPendingVerificationUsers());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/verify-pan")
-    public ResponseEntity<?> verifyPan(@RequestBody VerifyPanRequest request) {
-        return ResponseEntity.ok(new ApiResponse());
+    public ResponseEntity<?> verifyPan(@RequestBody JsonNode request) {
+        String email = request.get("email").asText();
+        PendingUser existingPendingUser = userService.findPendingUserByEmail(email);
+        if (existingPendingUser != null) {
+            userService.deletePendingUser(existingPendingUser);
+            return ResponseEntity.ok(new ApiResponse(true, "User verified successfully"));
+        }
+        return ResponseEntity.ok(new ApiResponse(false, "User not found"));
     }
 }
